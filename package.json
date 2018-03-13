@@ -8,9 +8,11 @@
   "license": "MIT",
   "scripts": {
     "dev": "webpack-dev-server",
-    "lint": "eslint src/**"
+    "lint": "eslint src/**",
+    "validate": "npm ls"
   },
   "dependencies": {
+    "precommit-hook": "^3.0.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0"
   },
