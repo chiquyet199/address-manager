@@ -6,7 +6,8 @@
     "document": true,
     "module": true,
     "__dirname": true,
-    "require": true
+    "require": true,
+    "process": true
   },
   "rules": {}
 }
