@@ -3,7 +3,10 @@
   "plugins": ["react"],
   "extends": ["eslint:recommended", "plugin:react/recommended"],
   "globals": {
-    "document": true
+    "document": true,
+    "module": true,
+    "__dirname": true,
+    "require": true
   },
   "rules": {}
 }
