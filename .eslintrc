@@ -1,5 +1,9 @@
 {
   "parser": "babel-eslint",
   "plugins": ["react"],
+  "extends": ["eslint:recommended", "plugin:react/recommended"],
+  "globals": {
+    "document": true
+  },
   "rules": {}
 }
