@@ -1,7 +1,9 @@
 import React from 'react'
 
+import { Loading } from 'components'
+
 const App = props => {
-    return <div>Hello</div>
+  return <Loading />
 }
 
 export default App

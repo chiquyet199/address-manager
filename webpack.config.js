@@ -4,6 +4,7 @@ module.exports = {
   module: {
     loaders: [
       { test: /\.js?$/, loader: 'babel-loader', exclude: /node_modules/ },
+      { test: /\.js?$/, loader: 'eslint-loader', exclude: /node_modules/ },
     ],
   },
   resolve: {
@@ -17,6 +18,6 @@ module.exports = {
   },
   devServer: {
     contentBase: './dist',
-    port: 3000
-  }
+    port: 3000,
+  },
 }
