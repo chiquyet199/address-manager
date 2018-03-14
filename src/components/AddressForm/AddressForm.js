@@ -1,42 +1,47 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import { shallowEqual } from 'services/utils'
 
 class AddressForm extends Component {
-  constructor(props) {
-    super(props)
-    const { mode } = this.props
-    const { street, ward, district, city, country } = this.props.data
-    const inEditMode = mode === 'edit'
-    this.state = {
-      street: inEditMode ? street : '',
-      ward: inEditMode ? ward : '',
-      district: inEditMode ? district : '',
-      city: inEditMode ? city : '',
-      country: inEditMode ? country : '',
-    }
+  state = {
+    id: '',
+    street: '',
+    ward: '',
+    district: '',
+    city: '',
+    country: '',
   }
 
   static propTypes = {
-    mode: PropTypes.oneOf(['add', 'edit']),
-    data: PropTypes.object,
     onSubmit: PropTypes.func,
   }
 
   static defaultProps = {
-    mode: 'add',
-    data: {},
+    onSubmit: () => {},
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { mode } = nextProps
-    const { street, ward, district, city, country } = nextProps.data
-    const inEditMode = mode === 'edit'
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.shallowCompare(this, nextProps, nextState)
+  }
+
+  shallowCompare = (instance, nextProps, nextState) => {
+    return !shallowEqual(instance.props, nextProps, true) || !shallowEqual(instance.state, nextState)
+  }
+
+  changeMode = mode => {
+    this.setState({ mode })
+  }
+
+  fillData = data => {
+    const { id, street, ward, district, city, country } = data
+    const inEditMode = this.state.mode === 'edit'
     this.setState({
-      street: inEditMode ? street : '',
-      ward: inEditMode ? ward : '',
-      district: inEditMode ? district : '',
-      city: inEditMode ? city : '',
-      country: inEditMode ? country : '',
+      id,
+      street: inEditMode ? street || '' : '',
+      ward: inEditMode ? ward || '' : '',
+      district: inEditMode ? district || '' : '',
+      city: inEditMode ? city || '' : '',
+      country: inEditMode ? country || '' : '',
     })
   }
 
@@ -51,10 +56,10 @@ class AddressForm extends Component {
 
   onSubmit = event => {
     event.preventDefault()
-    const { street, ward, district, city, country } = this.state
+    const { mode, street, ward, district, city, country, id } = this.state
     if (this.validate()) {
       this.clearForm()
-      this.props.onSubmit({ street, ward, district, city, country })
+      this.props.onSubmit({ id, street, ward, district, city, country }, mode)
     } else {
       alert(
         'Pls check form data again. "street" and "city" OR "street" and "ward" and "district" should not be empty',
@@ -72,8 +77,7 @@ class AddressForm extends Component {
   }
 
   render() {
-    const { mode } = this.props
-    const { street, ward, district, city, country } = this.state
+    const { mode, street, ward, district, city, country } = this.state
     return (
       <form onSubmit={this.onSubmit}>
         <label>

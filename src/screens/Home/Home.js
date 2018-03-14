@@ -1,23 +1,23 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { database } from 'configs/firebase'
 
-import { addAddress, editAddress } from 'actions/address'
+import { addAddress, editAddress, getAddresses } from 'actions/address'
 import { Loading, AddressItem, AddressForm } from 'components'
 
 class Home extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      editingAddress: {},
-    }
+  state = {
+    editingAddress: {},
   }
+
   static propTypes = {
     isFetching: PropTypes.bool.isRequired,
     addressesById: PropTypes.object.isRequired,
     addressesListedIds: PropTypes.array.isRequired,
     addAddress: PropTypes.func.isRequired,
     editAddress: PropTypes.func.isRequired,
+    getAddresses: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -25,13 +25,32 @@ class Home extends Component {
     addresses: [],
   }
 
-  enableEditMode = id => {
-    const { addressesById } = this.props
-    this.setState({ editingAddress: addressesById[id], formMode: 'edit' })
+  addressForm = null
+  addressRef = database.ref().child('addresses')
+
+  componentWillMount() {
+    // this.addressRef.on('child_added', snap => {
+    //   console.log('child add', snap.val())
+    //   // const dataAdded = snap.val()
+    //   // this.props.addAddress({ ...dataAdded, id: snap.key })
+    // })
+    // this.addressRef.on('child_changed', snap => {
+    //   // const dataChanged = snap.val()
+    //   // this.props.editAddress({ ...dataChanged, id: snap.key })
+    // })
+    // this.addressRef.on('child_removed', snap => {
+    //   console.log(snap.val())
+    // })
   }
 
-  enalbleAddMode = () => {
-    this.setState({ formMode: 'add' })
+  componentDidMount() {
+    this.props.getAddresses()
+  }
+
+  enableEditMode = id => {
+    const { addressesById } = this.props
+    this.addressForm.changeMode('edit')
+    this.addressForm.fillData(addressesById[id])
   }
 
   renderAddressItem = id => {
@@ -46,12 +65,8 @@ class Home extends Component {
     )
   }
 
-  addressFormSubmit = data => {
-    const { formMode } = this.state
-    formMode === 'edit'
-      ? this.props.editAddress({ ...data, id: this.state.editingAddress.id })
-      : this.props.addAddress(data)
-    this.enalbleAddMode()
+  addressFormSubmit = (data, formMode) => {
+    formMode === 'edit' ? this.props.editAddress(data) : this.props.addAddress(data)
   }
 
   render() {
@@ -60,19 +75,24 @@ class Home extends Component {
     return (
       <div>
         {isFetching && <Loading />}
-        <AddressForm mode={formMode} data={editingAddress} onSubmit={this.addressFormSubmit} />
+        <AddressForm
+          ref={node => (this.addressForm = node)}
+          mode={formMode}
+          data={editingAddress}
+          onSubmit={this.addressFormSubmit}
+        />
         {addressesListedIds.map(this.renderAddressItem)}
       </div>
     )
   }
 }
 
-const mapStateToProps = ({ address }) => {
+const mapStateToProps = ({ address, common }) => {
   return {
     addressesById: address.byId,
     addressesListedIds: address.listedIds,
-    isFetching: address.isFetching,
+    isFetching: common.isLoading,
   }
 }
 
-export default connect(mapStateToProps, { addAddress, editAddress })(Home)
+export default connect(mapStateToProps, { addAddress, editAddress, getAddresses })(Home)
