@@ -8,6 +8,8 @@
     "__dirname": true,
     "alert": true,
     "require": true,
+    "google": true,
+    "window": true,
     "process": true
   },
   "rules": {}

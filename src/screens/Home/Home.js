@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { database } from 'configs/firebase'
 
 import { addAddress, editAddress, getAddresses } from 'actions/address'
-import { Loading, AddressItem, AddressForm } from 'components'
+import { Loading, AddressItem, AddressForm, Map } from 'components'
 
 class Home extends Component {
   state = {
@@ -75,6 +75,7 @@ class Home extends Component {
     return (
       <div>
         {isFetching && <Loading />}
+        <Map />
         <AddressForm
           ref={node => (this.addressForm = node)}
           mode={formMode}
