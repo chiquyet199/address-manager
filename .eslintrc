@@ -6,6 +6,7 @@
     "document": true,
     "module": true,
     "__dirname": true,
+    "alert": true,
     "require": true,
     "process": true
   },

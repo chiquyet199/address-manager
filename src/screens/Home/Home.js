@@ -2,10 +2,16 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
-import { addAddress, editAddress } from 'actions/address.action'
-import { Loading, AddressItem } from 'components'
+import { addAddress, editAddress } from 'actions/address'
+import { Loading, AddressItem, AddressForm } from 'components'
 
 class Home extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      editingAddress: {},
+    }
+  }
   static propTypes = {
     isFetching: PropTypes.bool.isRequired,
     addressesById: PropTypes.object.isRequired,
@@ -19,9 +25,13 @@ class Home extends Component {
     addresses: [],
   }
 
-  editAddress = id => {
-    const { editAddress, addressesById } = this.props
-    editAddress({ ...addressesById[id], country: 'XXX' })
+  enableEditMode = id => {
+    const { addressesById } = this.props
+    this.setState({ editingAddress: addressesById[id], formMode: 'edit' })
+  }
+
+  enalbleAddMode = () => {
+    this.setState({ formMode: 'add' })
   }
 
   renderAddressItem = id => {
@@ -30,18 +40,27 @@ class Home extends Component {
         key={id}
         {...this.props.addressesById[id]}
         onClick={() => {
-          this.editAddress(id)
+          this.enableEditMode(id)
         }}
       />
     )
   }
 
+  addressFormSubmit = data => {
+    const { formMode } = this.state
+    formMode === 'edit'
+      ? this.props.editAddress({ ...data, id: this.state.editingAddress.id })
+      : this.props.addAddress(data)
+    this.enalbleAddMode()
+  }
+
   render() {
-    const { isFetching, addressesListedIds, addAddress } = this.props
+    const { isFetching, addressesListedIds } = this.props
+    const { editingAddress, formMode } = this.state
     return (
       <div>
         {isFetching && <Loading />}
-        <button onClick={addAddress}>Add</button>
+        <AddressForm mode={formMode} data={editingAddress} onSubmit={this.addressFormSubmit} />
         {addressesListedIds.map(this.renderAddressItem)}
       </div>
     )

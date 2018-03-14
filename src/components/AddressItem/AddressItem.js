@@ -1,16 +1,15 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
+import { shallowEqual } from 'services/utils'
+
 class AddressItem extends Component {
-  shouldComponentUpdate(nextProps) {
-    const { street, ward, district, city, country } = this.props
-    return (
-      ward !== nextProps.ward ||
-      city !== nextProps.city ||
-      street !== nextProps.street ||
-      country !== nextProps.country ||
-      district !== nextProps.district
-    )
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.shallowCompare(this, nextProps, nextState)
+  }
+
+  shallowCompare = (instance, nextProps, nextState) => {
+    return !shallowEqual(instance.props, nextProps, true) || !shallowEqual(instance.state, nextState)
   }
 
   render() {

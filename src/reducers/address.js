@@ -1,4 +1,4 @@
-import { ADD_ADDRESS, EDIT_ADDRESS } from 'actions/address.action'
+import { ADD_ADDRESS, EDIT_ADDRESS } from 'actions/address'
 
 const initialListedIds = ['20398162837', '20123162837']
 const initialById = {
