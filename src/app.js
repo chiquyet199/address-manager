@@ -1,9 +1,9 @@
 import React from 'react'
 
-import { Loading } from 'components'
+import { HomeScreen } from 'screens'
 
 const App = () => {
-  return <Loading />
+  return <HomeScreen />
 }
 
 export default App
