@@ -48,7 +48,7 @@ class AddressForm extends Component {
   }
 
   reset = () => {
-    this.setState({ street: '', ward: '', district: '', city: '', country: '' })
+    this.setState({ street: '', ward: '', district: '', city: '', country: '', mode: 'add' })
   }
 
   validate = () => {
@@ -78,6 +78,7 @@ class AddressForm extends Component {
 
   render() {
     const { mode, street, ward, district, city, country } = this.state
+    const inEditMode = mode === 'edit'
     return (
       <form onSubmit={this.onSubmit}>
         <label>
@@ -100,7 +101,8 @@ class AddressForm extends Component {
           Country:
           <input type="text" htmlFor="country" value={country} onChange={this.handleChange} />
         </label>
-        <input type="submit" value={mode === 'add' ? 'Add' : 'Save'} />
+        <input type="submit" value={inEditMode ? 'Save' : 'Add'} />
+        {inEditMode && <input type="button" value="Reset" onClick={this.reset} />}
       </form>
     )
   }
