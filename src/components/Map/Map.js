@@ -1,8 +1,18 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import { location } from 'services'
 
 import './Map.scss'
 
 class Map extends Component {
+  static propTypes = {
+    onClick: PropTypes.func.isRequired,
+  }
+
+  static defaultProps = {
+    onClick: () => {},
+  }
+
   componentDidMount() {
     const mapOptions = {
       center: new google.maps.LatLng(10.0, 106.0),
@@ -10,10 +20,13 @@ class Map extends Component {
       mapTypeId: google.maps.MapTypeId.ROADMAP,
     }
     this.addressMarker = null
-    this.geocoder = new google.maps.Geocoder()
     this.infowindow = new google.maps.InfoWindow()
     this.map = new google.maps.Map(document.getElementById('map'), mapOptions)
     google.maps.event.addListener(this.map, 'click', this.onMapClickHandler)
+  }
+
+  shouldComponentUpdate() {
+    return false
   }
 
   onMapClickHandler = e => {
@@ -23,26 +36,23 @@ class Map extends Component {
       position,
       map: this.map,
     })
-    this.latlng = { lat: position.lat(), lng: position.lng() }
-    this.geocoder.geocode({ location: this.latlng }, this.getAddressFromMarker)
+    const latlng = { lat: position.lat(), lng: position.lng() }
+    location.getAddress(latlng, this.showAddressOnInfoWindow)
   }
 
-  getAddressFromMarker = (results, status) => {
-    if (status === 'OK') {
-      if (results[0]) {
-        // console.log('---', results[0].formatted_address)
-        this.infowindow.setContent(results[0].formatted_address)
-        this.infowindow.open(this.map, this.marker)
-      } else {
-        window.alert('No results found')
-      }
-    } else {
-      window.alert('Geocoder failed due to: ' + status)
-    }
-  }
-
-  shouldComponentUpdate() {
-    return false
+  showAddressOnInfoWindow = address => {
+    // console.log(address)
+    const data = address.split(',')
+    const length = data.length
+    this.props.onClick({
+      street: data[0],
+      ward: length > 4 ? data[length - 4] : '',
+      district: data[length - 3],
+      city: data[length - 2],
+      country: data[length - 1],
+    })
+    this.infowindow.setContent(address)
+    this.infowindow.open(this.map, this.addressMarker)
   }
 
   render() {

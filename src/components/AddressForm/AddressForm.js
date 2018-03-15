@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { shallowEqual } from 'services/utils'
+import { utils } from 'services'
+import { error } from 'services/notification'
 
 class AddressForm extends Component {
   state = {
@@ -25,7 +26,9 @@ class AddressForm extends Component {
   }
 
   shallowCompare = (instance, nextProps, nextState) => {
-    return !shallowEqual(instance.props, nextProps, true) || !shallowEqual(instance.state, nextState)
+    return (
+      !utils.shallowEqual(instance.props, nextProps, true) || !utils.shallowEqual(instance.state, nextState)
+    )
   }
 
   changeMode = mode => {
@@ -34,15 +37,18 @@ class AddressForm extends Component {
 
   fillData = data => {
     const { id, street, ward, district, city, country } = data
-    const inEditMode = this.state.mode === 'edit'
     this.setState({
       id,
-      street: inEditMode ? street || '' : '',
-      ward: inEditMode ? ward || '' : '',
-      district: inEditMode ? district || '' : '',
-      city: inEditMode ? city || '' : '',
-      country: inEditMode ? country || '' : '',
+      street: street || '',
+      ward: ward || '',
+      district: district || '',
+      city: city || '',
+      country: country || '',
     })
+  }
+
+  reset = () => {
+    this.setState({ street: '', ward: '', district: '', city: '', country: '' })
   }
 
   validate = () => {
@@ -58,17 +64,11 @@ class AddressForm extends Component {
     event.preventDefault()
     const { mode, street, ward, district, city, country, id } = this.state
     if (this.validate()) {
-      this.clearForm()
+      this.reset()
       this.props.onSubmit({ id, street, ward, district, city, country }, mode)
     } else {
-      alert(
-        'Pls check form data again. "street" and "city" OR "street" and "ward" and "district" should not be empty',
-      )
+      error({ message: '"street" and "city" OR "street" and "ward" and "district" should not be empty' })
     }
-  }
-
-  clearForm = () => {
-    this.setState({ street: '', ward: '', district: '', city: '', country: '' })
   }
 
   handleChange = event => {

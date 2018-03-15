@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-import { shallowEqual } from 'services/utils'
+import { utils } from 'services'
 
 class AddressItem extends Component {
   shouldComponentUpdate(nextProps, nextState) {
@@ -9,7 +9,9 @@ class AddressItem extends Component {
   }
 
   shallowCompare = (instance, nextProps, nextState) => {
-    return !shallowEqual(instance.props, nextProps, true) || !shallowEqual(instance.state, nextState)
+    return (
+      !utils.shallowEqual(instance.props, nextProps, true) || !utils.shallowEqual(instance.state, nextState)
+    )
   }
 
   render() {

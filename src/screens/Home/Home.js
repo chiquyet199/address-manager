@@ -65,6 +65,11 @@ class Home extends Component {
     )
   }
 
+  mapClickHandler = address => {
+    this.addressForm.changeMode('edit')
+    this.addressForm.fillData(address)
+  }
+
   addressFormSubmit = (data, formMode) => {
     formMode === 'edit' ? this.props.editAddress(data) : this.props.addAddress(data)
   }
@@ -81,7 +86,7 @@ class Home extends Component {
       <div>
         {isFetching && <Loading />}
         <CsvDownloader headers={headers} data={data} text={'Download'} />
-        <Map />
+        <Map onClick={this.mapClickHandler} />
         <AddressForm
           ref={node => (this.addressForm = node)}
           mode={formMode}

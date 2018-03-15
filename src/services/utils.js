@@ -1,4 +1,4 @@
-export { shallowEqual, guid }
+export default { shallowEqual, guid }
 
 /**
  *

@@ -1,8 +1,8 @@
-export { handleServerError }
+import { notification, logging } from 'services'
+
+export default { handleServerError }
 
 function handleServerError(err) {
-  if (process.env.NODE_ENV !== 'production') {
-    console.error('Error', err) // eslint-disable-line
-  }
-  alert('Server error, Please check your internet connection or contact administrator for more info!!!')
+  logging.error(err)
+  notification.error({ message: 'Server error, Please check your internet or contact administrator !!!' })
 }
