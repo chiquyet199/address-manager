@@ -1,0 +1,42 @@
+@import './../../assets/css/base.scss';
+
+.csv-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  border: 1px solid;
+  border-radius: 25px;
+  background: url('http://www.pvhc.net/img18/exmmiaygwhmnpyvynlmx.png') center center no-repeat;
+  background-size: 40px;
+  font-size: -webkit-xxx-large;
+  overflow: hidden;
+  color: black;
+
+  .mover {
+    width: 50px;
+    height: 50px;
+    background: $primary-color;
+    border-radius: 50%;
+    animation: move 5s infinite ease-in-out;
+  }
+
+  a {
+    opacity: 0;
+  }
+}
+
+@keyframes move {
+  20%,
+  100% {
+    opacity: 0;
+    transform: translateY(200px, 0);
+  }
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.5;
+  }
+}
