@@ -10,7 +10,8 @@
     "dev": "webpack-dev-server",
     "lint": "eslint src/**",
     "start": "npm run build && NODE_ENV=production node server.js",
-    "build": "webpack --config webpack.prod.config.js"
+    "build": "webpack --config webpack.prod.config.js",
+    "validate": "npm ls"
   },
   "dependencies": {
     "babel-core": "^6.26.0",
@@ -27,6 +28,7 @@
     "precommit-hook": "^3.0.0",
     "prop-types": "^15.6.1",
     "react": "^16.2.0",
+    "react-csv": "^1.0.14",
     "react-dom": "^16.2.0",
     "react-redux": "^5.0.7",
     "redux": "^3.7.2",

@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { database } from 'configs/firebase'
 
 import { addAddress, editAddress, getAddresses } from 'actions/address'
-import { Loading, AddressItem, AddressForm, Map } from 'components'
+import { Loading, AddressItem, AddressForm, Map, CsvDownloader } from 'components'
 
 class Home extends Component {
   state = {
@@ -70,11 +70,17 @@ class Home extends Component {
   }
 
   render() {
-    const { isFetching, addressesListedIds } = this.props
+    const headers = ['Street', 'Ward', 'District', 'City', 'Country']
     const { editingAddress, formMode } = this.state
+    const { isFetching, addressesListedIds, addressesById } = this.props
+    const data = addressesListedIds.map(item => {
+      const { street, ward, district, city, country } = addressesById[item]
+      return [street, ward, district, city, country]
+    })
     return (
       <div>
         {isFetching && <Loading />}
+        <CsvDownloader headers={headers} data={data} text={'Download'} />
         <Map />
         <AddressForm
           ref={node => (this.addressForm = node)}
