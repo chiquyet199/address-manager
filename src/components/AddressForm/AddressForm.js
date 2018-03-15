@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { utils } from 'services'
-import { error } from 'services/notification'
+import { TextInput, Button } from 'components'
+import { utils, notification } from 'services'
+
+import './AddressForm.scss'
 
 class AddressForm extends Component {
   state = {
@@ -67,7 +69,9 @@ class AddressForm extends Component {
       this.reset()
       this.props.onSubmit({ id, street, ward, district, city, country }, mode)
     } else {
-      error({ message: '"street" and "city" OR "street" and "ward" and "district" should not be empty' })
+      notification.error({
+        message: '"street" and "city" OR "street" and "ward" and "district" should not be empty',
+      })
     }
   }
 
@@ -80,29 +84,16 @@ class AddressForm extends Component {
     const { mode, street, ward, district, city, country } = this.state
     const inEditMode = mode === 'edit'
     return (
-      <form onSubmit={this.onSubmit}>
-        <label>
-          Street:
-          <input type="text" htmlFor="street" value={street} onChange={this.handleChange} />
-        </label>
-        <label>
-          Ward:
-          <input type="text" htmlFor="ward" value={ward} onChange={this.handleChange} />
-        </label>
-        <label>
-          District:
-          <input type="text" htmlFor="district" value={district} onChange={this.handleChange} />
-        </label>
-        <label>
-          City:
-          <input type="text" htmlFor="city" value={city} onChange={this.handleChange} />
-        </label>
-        <label>
-          Country:
-          <input type="text" htmlFor="country" value={country} onChange={this.handleChange} />
-        </label>
-        <input type="submit" value={inEditMode ? 'Save' : 'Add'} />
-        {inEditMode && <input type="button" value="Reset" onClick={this.reset} />}
+      <form className="form-wrapper" onSubmit={this.onSubmit}>
+        <TextInput label="Street" name="street" value={street} onChange={this.handleChange} />
+        <TextInput label="Ward" name="ward" value={ward} onChange={this.handleChange} />
+        <TextInput label="District" name="district" value={district} onChange={this.handleChange} />
+        <TextInput label="City" name="city" value={city} onChange={this.handleChange} />
+        <TextInput label="Country" name="country" value={country} onChange={this.handleChange} />
+        <div className="btn-group">
+          <Button type="submit">{inEditMode ? 'Save' : 'Add'} </Button>
+          {inEditMode && <Button onClick={this.reset}>Reset</Button>}
+        </div>
       </form>
     )
   }
