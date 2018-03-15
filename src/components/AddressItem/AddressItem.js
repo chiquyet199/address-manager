@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-
 import { utils } from 'services'
+
+import './AddressItem.scss'
 
 class AddressItem extends Component {
   shouldComponentUpdate(nextProps, nextState) {
@@ -16,15 +17,10 @@ class AddressItem extends Component {
 
   render() {
     const { street, ward, district, city, country, onClick } = this.props
+    const display = `${street}, ${ward}, ${district}, ${city}, ${country}`
     return (
-      <div onClick={onClick}>
-        <ul>
-          <li>{street}</li>
-          <li>{ward}</li>
-          <li>{district}</li>
-          <li>{city}</li>
-          <li>{country}</li>
-        </ul>
+      <div className="item-wrapper" onClick={onClick}>
+        <p>{display.replace(/, ,/g, ',')}</p>
       </div>
     )
   }

@@ -6,6 +6,8 @@ import { database } from 'configs/firebase'
 import { addAddress, editAddress, getAddresses } from 'actions/address'
 import { Loading, AddressItem, AddressForm, Map, CsvDownloader } from 'components'
 
+import './Home.scss'
+
 class Home extends Component {
   state = {
     editingAddress: {},
@@ -83,18 +85,22 @@ class Home extends Component {
       return [street, ward, district, city, country]
     })
     return (
-      <div>
+      <main className="home-wrapper">
+        <div className="map-container">
+          <Map onClick={this.mapClickHandler} />
+        </div>
+        <div className="form-container">
+          <AddressForm
+            ref={node => (this.addressForm = node)}
+            mode={formMode}
+            data={editingAddress}
+            onSubmit={this.addressFormSubmit}
+          />
+        </div>
         {isFetching && <Loading />}
+        <div className="address-container">{addressesListedIds.map(this.renderAddressItem)}</div>
         <CsvDownloader headers={headers} data={data} text={'Download'} />
-        <Map onClick={this.mapClickHandler} />
-        <AddressForm
-          ref={node => (this.addressForm = node)}
-          mode={formMode}
-          data={editingAddress}
-          onSubmit={this.addressFormSubmit}
-        />
-        {addressesListedIds.map(this.renderAddressItem)}
-      </div>
+      </main>
     )
   }
 }

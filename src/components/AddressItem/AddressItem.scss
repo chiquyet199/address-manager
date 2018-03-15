@@ -1,0 +1,16 @@
+@import './../../assets/css/base.scss';
+
+.item-wrapper {
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  background-color: rgba($color: $dark-white, $alpha: 0.6);
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  p {
+    font-size: large;
+  }
+}
