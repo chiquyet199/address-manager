@@ -13,14 +13,19 @@ class AddressForm extends Component {
     district: '',
     city: '',
     country: '',
+    mode: 'add',
   }
 
   static propTypes = {
     onSubmit: PropTypes.func,
+    onCancel: PropTypes.func,
+    onFocus: PropTypes.func,
   }
 
   static defaultProps = {
     onSubmit: () => {},
+    onCancel: () => {},
+    onFocus: () => {},
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -37,8 +42,9 @@ class AddressForm extends Component {
     this.setState({ mode })
   }
 
-  fillData = data => {
-    const { id, street, ward, district, city, country } = data
+  fillData = (data, fromMap) => {
+    const { street, ward, district, city, country } = data
+    const id = fromMap ? this.state.id : data.id
     this.setState({
       id,
       street: street || '',
@@ -60,6 +66,15 @@ class AddressForm extends Component {
     const haveWard = !!ward
     const haveDistrict = !!district
     return (haveStreet && haveCity) || (haveStreet && haveWard && haveDistrict)
+  }
+
+  onCancel = () => {
+    this.reset()
+    this.props.onCancel()
+  }
+
+  onFocus = () => {
+    this.props.onFocus()
   }
 
   onSubmit = event => {
@@ -84,15 +99,15 @@ class AddressForm extends Component {
     const { mode, street, ward, district, city, country } = this.state
     const inEditMode = mode === 'edit'
     return (
-      <form className="form-wrapper" onSubmit={this.onSubmit}>
+      <form className="form-wrapper" onSubmit={this.onSubmit} onFocus={this.onFocus}>
         <TextInput label="Street" name="street" value={street} onChange={this.handleChange} />
         <TextInput label="Ward" name="ward" value={ward} onChange={this.handleChange} />
         <TextInput label="District" name="district" value={district} onChange={this.handleChange} />
         <TextInput label="City" name="city" value={city} onChange={this.handleChange} />
         <TextInput label="Country" name="country" value={country} onChange={this.handleChange} />
         <div className="btn-group">
-          <Button type="submit">{inEditMode ? 'Save' : 'Add'} </Button>
-          {inEditMode && <Button onClick={this.reset}>Reset</Button>}
+          <Button type="submit">{inEditMode ? 'Save' : 'Add'}</Button>
+          <Button onClick={this.onCancel}>Cancel</Button>
         </div>
       </form>
     )

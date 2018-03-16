@@ -25,7 +25,7 @@ listIdsActionHandlers[GET_ADDRESSES_SUCCESS] = (state, addressObj) => {
 }
 listIdsActionHandlers[ADD_ADDRESS] = (state, newAddress) => {
   const { id } = newAddress
-  return [...state, id]
+  return [id, ...state]
 }
 
 function byId(state = initialById, action) {

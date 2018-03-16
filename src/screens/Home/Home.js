@@ -11,6 +11,7 @@ import './Home.scss'
 class Home extends Component {
   state = {
     editingAddress: {},
+    showMap: false,
   }
 
   static propTypes = {
@@ -50,6 +51,7 @@ class Home extends Component {
   }
 
   enableEditMode = id => {
+    this.showMap()
     const { addressesById } = this.props
     this.addressForm.changeMode('edit')
     this.addressForm.fillData(addressesById[id])
@@ -68,38 +70,61 @@ class Home extends Component {
   }
 
   mapClickHandler = address => {
-    this.addressForm.changeMode('edit')
-    this.addressForm.fillData(address)
+    this.addressForm.fillData(address, true)
   }
 
-  addressFormSubmit = (data, formMode) => {
-    formMode === 'edit' ? this.props.editAddress(data) : this.props.addAddress(data)
+  addressFormSubmit = ({ id, street, ward, district, city, country }, formMode) => {
+    if (formMode === 'edit' && !!id) {
+      this.props.editAddress({ id, street, ward, district, city, country })
+    } else if (formMode === 'add') {
+      this.props.addAddress({ street, ward, district, city, country })
+    }
+    this.addressForm.reset()
+    this.hideMap()
+  }
+
+  addressFormFocus = () => {
+    if (!this.state.showMap) {
+      this.showMap()
+    }
+  }
+
+  hideMap = () => {
+    this.setState({ showMap: false })
+  }
+
+  showMap = () => {
+    this.setState({ showMap: true })
   }
 
   render() {
     const headers = ['Street', 'Ward', 'District', 'City', 'Country']
-    const { editingAddress, formMode } = this.state
+    const { editingAddress, formMode, showMap } = this.state
     const { isFetching, addressesListedIds, addressesById } = this.props
     const data = addressesListedIds.map(item => {
       const { street, ward, district, city, country } = addressesById[item]
       return [street, ward, district, city, country]
     })
+    const mapClasses = ['map-container']
+    showMap && mapClasses.push('show')
     return (
       <main className="home-wrapper">
-        <div className="map-container">
-          <Map onClick={this.mapClickHandler} />
-        </div>
         <div className="form-container">
           <AddressForm
             ref={node => (this.addressForm = node)}
             mode={formMode}
             data={editingAddress}
+            onFocus={this.addressFormFocus}
+            onCancel={this.hideMap}
             onSubmit={this.addressFormSubmit}
           />
         </div>
         {isFetching && <Loading />}
         <div className="address-container">{addressesListedIds.map(this.renderAddressItem)}</div>
         <CsvDownloader headers={headers} data={data} text={'Download'} />
+        <div className={mapClasses.join(' ')}>
+          <Map onClick={this.mapClickHandler} />
+        </div>
       </main>
     )
   }
