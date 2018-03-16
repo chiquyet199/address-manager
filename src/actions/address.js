@@ -60,20 +60,9 @@ function addAddress(address) {
  * @param {Address object will be get updated} editedAddress
  */
 function editAddress(editedAddress) {
-  // return { type: EDIT_ADDRESS, editedAddress }
   return dispatch => {
-    // dispatch(toggleLoading(true))
     const ref = database.ref('/addresses')
-    ref
-      .child(editedAddress.id)
-      .set(editedAddress)
-      .then(() => {
-        // dispatch(toggleLoading(false))
-        dispatch({ type: EDIT_ADDRESS, payload: editedAddress })
-      })
-      .catch(err => {
-        // dispatch(toggleLoading(false))
-        dispatch(serverError(err))
-      })
+    ref.child(editedAddress.id).set(editedAddress)
+    dispatch({ type: EDIT_ADDRESS, payload: editedAddress })
   }
 }
