@@ -29,8 +29,12 @@ class Map extends Component {
     return false
   }
 
-  onMapClickHandler = e => {
+  clearMarker = () => {
     if (this.addressMarker) this.addressMarker.setMap(null)
+  }
+
+  onMapClickHandler = e => {
+    this.clearMarker()
     const position = e.latLng
     this.addressMarker = new google.maps.Marker({
       position,

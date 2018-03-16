@@ -28,6 +28,7 @@ class Home extends Component {
     addresses: [],
   }
 
+  map = null
   addressForm = null
   addressRef = database.ref().child('addresses')
 
@@ -91,6 +92,7 @@ class Home extends Component {
 
   hideMap = () => {
     this.setState({ showMap: false })
+    this.map.clearMarker()
   }
 
   showMap = () => {
@@ -119,11 +121,14 @@ class Home extends Component {
             onSubmit={this.addressFormSubmit}
           />
         </div>
-        {isFetching && <Loading />}
-        <div className="address-container">{addressesListedIds.map(this.renderAddressItem)}</div>
+        {isFetching ? (
+          <Loading />
+        ) : (
+          <div className="address-container">{addressesListedIds.map(this.renderAddressItem)}</div>
+        )}
         <CsvDownloader headers={headers} data={data} text={'Download'} />
         <div className={mapClasses.join(' ')}>
-          <Map onClick={this.mapClickHandler} />
+          <Map ref={node => (this.map = node)} onClick={this.mapClickHandler} />
         </div>
       </main>
     )
