@@ -10,6 +10,7 @@
     "require": true,
     "google": true,
     "window": true,
+    "Promise": true,
     "process": true
   },
   "rules": {}

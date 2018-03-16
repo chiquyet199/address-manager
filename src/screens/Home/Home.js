@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { database } from 'configs/firebase'
 
-import { location } from 'services'
 import { addAddress, editAddress, getAddresses } from 'actions/address'
 import { Loading, AddressItem, AddressForm, Map, CsvDownloader } from 'components'
 
@@ -11,12 +10,12 @@ import './Home.scss'
 
 class Home extends Component {
   state = {
-    editingAddress: {},
     showMap: false,
   }
 
   static propTypes = {
     isFetching: PropTypes.bool.isRequired,
+    currentAddressObj: PropTypes.object,
     addressesById: PropTypes.object.isRequired,
     addressesListedIds: PropTypes.array.isRequired,
     addAddress: PropTypes.func.isRequired,
@@ -33,34 +32,25 @@ class Home extends Component {
   addressForm = null
   addressRef = database.ref().child('addresses')
 
-  componentWillMount() {
-    // this.addressRef.on('child_added', snap => {
-    //   console.log('child add', snap.val())
-    //   // const dataAdded = snap.val()
-    //   // this.props.addAddress({ ...dataAdded, id: snap.key })
-    // })
-    // this.addressRef.on('child_changed', snap => {
-    //   // const dataChanged = snap.val()
-    //   // this.props.editAddress({ ...dataChanged, id: snap.key })
-    // })
-    // this.addressRef.on('child_removed', snap => {
-    //   console.log(snap.val())
-    // })
-  }
-
   componentDidMount() {
     this.props.getAddresses()
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.addressForm.fillData(nextProps.currentAddressObj)
   }
 
   enableEditMode = id => {
     this.showMap()
     const { addressesById } = this.props
+    const { street, ward, district, city, country } = addressesById[id]
     const locationData = { lat: addressesById[id].lat, lng: addressesById[id].lng }
+    const address = [street, ward, district, city, country].join(', '.replace(/, ,/g, ','))
     this.addressForm.changeMode('edit')
     this.addressForm.fillData(addressesById[id])
     if (typeof locationData.lat === 'number' && typeof locationData.lng === 'number') {
-      this.map.createMarker(locationData)
-      this.map.moveTo(locationData)
+      this.map.getWrappedInstance().createMarker(locationData, address)
+      this.map.getWrappedInstance().moveTo(locationData)
     }
   }
 
@@ -98,30 +88,16 @@ class Home extends Component {
 
   hideMap = () => {
     this.setState({ showMap: false })
-    this.map.clearMarker()
+    this.map.getWrappedInstance().clearMarker()
   }
 
   showMap = () => {
     this.setState({ showMap: true })
   }
 
-  setCurrentLocation = () => {
-    this.setState({ gettingLocation: true })
-    location.getCurrentLocation(({ coords }) => {
-      const latlng = { lat: coords.latitude, lng: coords.longitude }
-      this.map.createMarker(latlng)
-      this.map.moveTo(latlng)
-      location.getAddress(latlng, address => {
-        const { street, ward, district, city, country } = address
-        this.addressForm.fillData({ street, ward, district, city, country }, true)
-        this.setState({ gettingLocation: false })
-      })
-    })
-  }
-
   render() {
     const headers = ['Street', 'Ward', 'District', 'City', 'Country']
-    const { editingAddress, formMode, showMap, gettingLocation } = this.state
+    const { formMode, showMap } = this.state
     const { isFetching, addressesListedIds, addressesById } = this.props
     const data = addressesListedIds.map(item => {
       const { street, ward, district, city, country } = addressesById[item]
@@ -135,7 +111,6 @@ class Home extends Component {
           <AddressForm
             ref={node => (this.addressForm = node)}
             mode={formMode}
-            data={editingAddress}
             onFocus={this.addressFormFocus}
             onCancel={this.hideMap}
             onSubmit={this.addressFormSubmit}
@@ -151,19 +126,18 @@ class Home extends Component {
         </div>
         <div className={mapClasses.join(' ')}>
           <Map ref={node => (this.map = node)} onClick={this.mapClickHandler} />
-          <div className="current-location-btn" onClick={this.setCurrentLocation} />
-          {gettingLocation && <Loading blockUi />}
         </div>
       </main>
     )
   }
 }
 
-const mapStateToProps = ({ address, common }) => {
+const mapStateToProps = ({ address, currentLocation }) => {
   return {
     addressesById: address.byId,
     addressesListedIds: address.listedIds,
-    isFetching: common.isLoading,
+    isFetching: address.isLoading,
+    currentAddressObj: currentLocation.addressObj,
   }
 }
 
