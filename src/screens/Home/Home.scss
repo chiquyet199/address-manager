@@ -22,10 +22,10 @@
     }
 
     @media screen and (max-width: $breakpoint-tablet) {
-      top: 180px;
+      top: 140px;
     }
     @media screen and (max-width: $breakpoint-mobile) {
-      top: 240px;
+      top: 200px;
     }
   }
 
@@ -37,10 +37,10 @@
     align-items: center;
     justify-content: center;
     @media screen and (min-width: $breakpoint-mobile) and (max-width: $breakpoint-tablet) {
-      height: 180px;
+      height: 140px;
     }
     @media screen and (max-width: $breakpoint-mobile) {
-      height: 240px;
+      height: 200px;
     }
   }
 
@@ -70,12 +70,12 @@
     }
 
     @media screen and (max-width: $breakpoint-tablet) {
-      top: 200px;
+      top: 160px;
       width: 80%;
     }
 
     @media screen and (max-width: $breakpoint-mobile) {
-      top: 260px;
+      top: 220px;
       width: 90%;
     }
   }

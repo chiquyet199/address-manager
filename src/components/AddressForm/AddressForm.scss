@@ -4,5 +4,16 @@
   .btn-group {
     display: inline-block;
     margin-left: 65px;
+
+    @media screen and (max-width: $breakpoint-mobile) {
+      display: flex;
+      flex-direction: column;
+      width: 90px;
+      padding: 0;
+      position: absolute;
+      top: 65px;
+      right: 10px;
+      margin: 0;
+    }
   }
 }

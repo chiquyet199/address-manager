@@ -9,7 +9,7 @@ const TextInput = props => {
     <div className="input-wrapper">
       <label>
         <span>{label}</span>
-        <input type="text" htmlFor={name} value={value} onChange={onChange} />
+        <input type="text" htmlFor={name} value={value} onChange={onChange} autoComplete="off" />
       </label>
     </div>
   )
