@@ -4,12 +4,12 @@ import PropTypes from 'prop-types'
 import './TextInput.scss'
 
 const TextInput = props => {
-  const { label, value, onChange, name } = props
+  const { label, name } = props
   return (
     <div className="input-wrapper">
       <label>
         <span>{label}</span>
-        <input type="text" htmlFor={name} value={value} onChange={onChange} autoComplete="off" />
+        <input {...props} type="text" htmlFor={name} autoComplete="off" />
       </label>
     </div>
   )

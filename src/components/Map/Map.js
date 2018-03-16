@@ -29,6 +29,17 @@ class Map extends Component {
     return false
   }
 
+  moveTo = position => {
+    this.map.panTo(position)
+  }
+
+  createMarker = position => {
+    this.addressMarker = new google.maps.Marker({
+      position,
+      map: this.map,
+    })
+  }
+
   clearMarker = () => {
     if (this.addressMarker) this.addressMarker.setMap(null)
   }
@@ -40,22 +51,14 @@ class Map extends Component {
       position,
       map: this.map,
     })
-    const latlng = { lat: position.lat(), lng: position.lng() }
-    location.getAddress(latlng, this.showAddressOnInfoWindow)
+    this.latlng = { lat: position.lat(), lng: position.lng() }
+    location.getAddress(this.latlng, this.showAddressOnInfoWindow)
   }
 
-  showAddressOnInfoWindow = address => {
-    // console.log(address)
-    const data = address.split(',')
-    const length = data.length
-    this.props.onClick({
-      street: data[0],
-      ward: length > 4 ? data[length - 4] : '',
-      district: data[length - 3],
-      city: data[length - 2],
-      country: data[length - 1],
-    })
-    this.infowindow.setContent(address)
+  showAddressOnInfoWindow = (addressObj, formatedAddress) => {
+    const { lat, lng } = this.latlng
+    this.props.onClick({ ...addressObj, lat, lng })
+    this.infowindow.setContent(formatedAddress)
     this.infowindow.open(this.map, this.addressMarker)
   }
 

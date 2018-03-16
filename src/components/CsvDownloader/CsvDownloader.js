@@ -9,7 +9,9 @@ const CsvDownloader = props => {
   return (
     <div className="csv-btn">
       <div className="mover" />
-      <CSVLink data={[headers, ...data]}>{text}</CSVLink>
+      <CSVLink data={[headers, ...data]} filename={'addresses.csv'}>
+        {text}
+      </CSVLink>
     </div>
   )
 }

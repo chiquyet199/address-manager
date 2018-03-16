@@ -43,10 +43,12 @@ class AddressForm extends Component {
   }
 
   fillData = (data, fromMap) => {
-    const { street, ward, district, city, country } = data
+    const { street, ward, district, city, country, lat, lng } = data
     const id = fromMap ? this.state.id : data.id
     this.setState({
       id,
+      lat,
+      lng,
       street: street || '',
       ward: ward || '',
       district: district || '',
@@ -56,7 +58,16 @@ class AddressForm extends Component {
   }
 
   reset = () => {
-    this.setState({ street: '', ward: '', district: '', city: '', country: '', mode: 'add' })
+    this.setState({
+      street: '',
+      ward: '',
+      district: '',
+      city: '',
+      country: '',
+      lat: null,
+      lng: null,
+      mode: 'add',
+    })
   }
 
   validate = () => {
@@ -79,10 +90,10 @@ class AddressForm extends Component {
 
   onSubmit = event => {
     event.preventDefault()
-    const { mode, street, ward, district, city, country, id } = this.state
+    const { mode, street, ward, district, city, country, id, lat, lng } = this.state
     if (this.validate()) {
       this.reset()
-      this.props.onSubmit({ id, street, ward, district, city, country }, mode)
+      this.props.onSubmit({ id, street, ward, district, city, country, lat, lng }, mode)
     } else {
       notification.error({
         message: '"street" and "city" OR "street" and "ward" and "district" should not be empty',
@@ -99,12 +110,42 @@ class AddressForm extends Component {
     const { mode, street, ward, district, city, country } = this.state
     const inEditMode = mode === 'edit'
     return (
-      <form className="form-wrapper" onSubmit={this.onSubmit} onFocus={this.onFocus}>
-        <TextInput label="Street" name="street" value={street} onChange={this.handleChange} />
-        <TextInput label="Ward" name="ward" value={ward} onChange={this.handleChange} />
-        <TextInput label="District" name="district" value={district} onChange={this.handleChange} />
-        <TextInput label="City" name="city" value={city} onChange={this.handleChange} />
-        <TextInput label="Country" name="country" value={country} onChange={this.handleChange} />
+      <form className="form-wrapper" onSubmit={this.onSubmit}>
+        <TextInput
+          onFocus={this.onFocus}
+          label="Street"
+          name="street"
+          value={street}
+          onChange={this.handleChange}
+        />
+        <TextInput
+          onFocus={this.onFocus}
+          label="Ward"
+          name="ward"
+          value={ward}
+          onChange={this.handleChange}
+        />
+        <TextInput
+          onFocus={this.onFocus}
+          label="District"
+          name="district"
+          value={district}
+          onChange={this.handleChange}
+        />
+        <TextInput
+          onFocus={this.onFocus}
+          label="City"
+          name="city"
+          value={city}
+          onChange={this.handleChange}
+        />
+        <TextInput
+          onFocus={this.onFocus}
+          label="Country"
+          name="country"
+          value={country}
+          onChange={this.handleChange}
+        />
         <div className="btn-group">
           <Button type="submit">{inEditMode ? 'Save' : 'Add'}</Button>
           <Button onClick={this.onCancel}>Cancel</Button>

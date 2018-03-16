@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { database } from 'configs/firebase'
 
+import { location } from 'services'
 import { addAddress, editAddress, getAddresses } from 'actions/address'
 import { Loading, AddressItem, AddressForm, Map, CsvDownloader } from 'components'
 
@@ -54,8 +55,13 @@ class Home extends Component {
   enableEditMode = id => {
     this.showMap()
     const { addressesById } = this.props
+    const locationData = { lat: addressesById[id].lat, lng: addressesById[id].lng }
     this.addressForm.changeMode('edit')
     this.addressForm.fillData(addressesById[id])
+    if (typeof locationData.lat === 'number' && typeof locationData.lng === 'number') {
+      this.map.createMarker(locationData)
+      this.map.moveTo(locationData)
+    }
   }
 
   renderAddressItem = id => {
@@ -74,11 +80,11 @@ class Home extends Component {
     this.addressForm.fillData(address, true)
   }
 
-  addressFormSubmit = ({ id, street, ward, district, city, country }, formMode) => {
+  addressFormSubmit = ({ id, street, ward, district, city, country, lat, lng }, formMode) => {
     if (formMode === 'edit' && !!id) {
-      this.props.editAddress({ id, street, ward, district, city, country })
+      this.props.editAddress({ id, street, ward, district, city, country, lat, lng })
     } else if (formMode === 'add') {
-      this.props.addAddress({ street, ward, district, city, country })
+      this.props.addAddress({ street, ward, district, city, country, lat, lng })
     }
     this.addressForm.reset()
     this.hideMap()
@@ -99,9 +105,23 @@ class Home extends Component {
     this.setState({ showMap: true })
   }
 
+  setCurrentLocation = () => {
+    this.setState({ gettingLocation: true })
+    location.getCurrentLocation(({ coords }) => {
+      const latlng = { lat: coords.latitude, lng: coords.longitude }
+      this.map.createMarker(latlng)
+      this.map.moveTo(latlng)
+      location.getAddress(latlng, address => {
+        const { street, ward, district, city, country } = address
+        this.addressForm.fillData({ street, ward, district, city, country }, true)
+        this.setState({ gettingLocation: false })
+      })
+    })
+  }
+
   render() {
     const headers = ['Street', 'Ward', 'District', 'City', 'Country']
-    const { editingAddress, formMode, showMap } = this.state
+    const { editingAddress, formMode, showMap, gettingLocation } = this.state
     const { isFetching, addressesListedIds, addressesById } = this.props
     const data = addressesListedIds.map(item => {
       const { street, ward, district, city, country } = addressesById[item]
@@ -131,6 +151,8 @@ class Home extends Component {
         </div>
         <div className={mapClasses.join(' ')}>
           <Map ref={node => (this.map = node)} onClick={this.mapClickHandler} />
+          <div className="current-location-btn" onClick={this.setCurrentLocation} />
+          {gettingLocation && <Loading blockUi />}
         </div>
       </main>
     )

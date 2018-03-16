@@ -207,9 +207,36 @@
   margin: 140px auto;
 }
 
+.absolute-loading {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  &:before {
+    background-image: linear-gradient(to bottom right, $secondary-color, $dark-white);
+    opacity: 0.6;
+    content: '';
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+}
+
 .loading {
   border: 2px solid transparent;
-  border-color: transparent $dark-gray transparent $dark-gray;
+  border-color: transparent $dark-white transparent $dark-white;
   -moz-animation: rotate-loading 1.5s linear 0s infinite normal;
   -moz-transform-origin: 50% 50%;
   -o-animation: rotate-loading 1.5s linear 0s infinite normal;
@@ -237,7 +264,7 @@
   -o-animation: loading-text-opacity 2s linear 0s infinite normal;
   -webkit-animation: loading-text-opacity 2s linear 0s infinite normal;
   animation: loading-text-opacity 2s linear 0s infinite normal;
-  color: $dark-gray;
+  color: $dark-white;
   font-family: 'Helvetica Neue, ' Helvetica ', ' 'arial';
   font-size: 10px;
   font-weight: bold;

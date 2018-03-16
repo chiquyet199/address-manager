@@ -4,12 +4,8 @@ import PropTypes from 'prop-types'
 import './Button.scss'
 
 const Button = props => {
-  const { children, type, onClick } = props
-  return (
-    <button type={type} onClick={onClick}>
-      {children}
-    </button>
-  )
+  const { children } = props
+  return <button {...props}>{children}</button>
 }
 
 Button.propTypes = {
