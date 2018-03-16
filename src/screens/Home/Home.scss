@@ -7,17 +7,6 @@
   background: url('http://unsplash.it/1200x800') center center no-repeat;
   background-size: cover;
 
-  &:after {
-    content: '';
-    position: relative;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background-image: linear-gradient(to bottom right, $secondary-color, $primary-color);
-    opacity: 0.6;
-  }
-
   .map-container {
     position: absolute;
     top: 80px;
@@ -31,6 +20,13 @@
       left: 0;
       opacity: 1;
     }
+
+    @media screen and (max-width: $breakpoint-tablet) {
+      top: 180px;
+    }
+    @media screen and (max-width: $breakpoint-mobile) {
+      top: 240px;
+    }
   }
 
   .form-container {
@@ -40,6 +36,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    @media screen and (min-width: $breakpoint-mobile) and (max-width: $breakpoint-tablet) {
+      height: 180px;
+    }
+    @media screen and (max-width: $breakpoint-mobile) {
+      height: 240px;
+    }
   }
 
   .address-container {
@@ -52,6 +54,7 @@
     padding-right: 17px;
     overflow: hidden;
     overflow-y: scroll;
+
     &::-webkit-scrollbar {
       width: 12px;
     }
@@ -65,5 +68,21 @@
       border-radius: 10px;
       -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
     }
+
+    @media screen and (max-width: $breakpoint-tablet) {
+      top: 200px;
+      width: 80%;
+    }
+
+    @media screen and (max-width: $breakpoint-mobile) {
+      top: 260px;
+      width: 90%;
+    }
+  }
+
+  .download-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
   }
 }

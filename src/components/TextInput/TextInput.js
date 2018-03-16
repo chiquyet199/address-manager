@@ -8,7 +8,7 @@ const TextInput = props => {
   return (
     <div className="input-wrapper">
       <label>
-        {label}
+        <span>{label}</span>
         <input type="text" htmlFor={name} value={value} onChange={onChange} />
       </label>
     </div>

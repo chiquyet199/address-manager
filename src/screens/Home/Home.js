@@ -126,7 +126,9 @@ class Home extends Component {
         ) : (
           <div className="address-container">{addressesListedIds.map(this.renderAddressItem)}</div>
         )}
-        <CsvDownloader headers={headers} data={data} text={'Download'} />
+        <div className="download-btn">
+          <CsvDownloader headers={headers} data={data} text={'Download'} />
+        </div>
         <div className={mapClasses.join(' ')}>
           <Map ref={node => (this.map = node)} onClick={this.mapClickHandler} />
         </div>
