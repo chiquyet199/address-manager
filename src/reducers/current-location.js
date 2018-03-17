@@ -2,7 +2,7 @@ import { GET_CURRENT_LOCATION, GET_CURRENT_LOCATION_SUCCESS } from 'actions/curr
 
 const initialState = {
   gettingCurrentLocation: false,
-  latlng: null,
+  latlng: {},
   addressObj: {},
   formatedAddress: '',
 }
@@ -14,7 +14,14 @@ actionHandlers[GET_CURRENT_LOCATION] = state => {
 }
 
 actionHandlers[GET_CURRENT_LOCATION_SUCCESS] = (state, { latlng, addressObj, formatedAddress }) => {
-  return { ...state, latlng, addressObj, formatedAddress, gettingCurrentLocation: false }
+  const { lat, lng } = latlng
+  return {
+    ...state,
+    latlng,
+    formatedAddress,
+    gettingCurrentLocation: false,
+    addressObj: { ...addressObj, lat, lng },
+  }
 }
 
 export default (state = initialState, action) => {

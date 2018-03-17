@@ -37,6 +37,10 @@ function getAddresses() {
  * @param {Address object will be add to list} address
  */
 function addAddress(address) {
+  const { lat, lng, street, ward, district, city, country } = address
+  if (!lat || !lng) {
+    address = { street, ward, district, city, country }
+  }
   return dispatch => {
     const ref = database.ref('/addresses')
     ref

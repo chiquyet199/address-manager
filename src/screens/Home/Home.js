@@ -37,7 +37,9 @@ class Home extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.addressForm.fillData(nextProps.currentAddressObj)
+    if (nextProps.currentAddressObj !== this.props.currentAddressObj) {
+      this.addressForm.fillData(nextProps.currentAddressObj)
+    }
   }
 
   enableEditMode = id => {

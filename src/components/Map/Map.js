@@ -34,7 +34,8 @@ class Map extends Component {
   componentWillReceiveProps(nextProps) {
     const { currentLatlng, gettingCurrentLocation, currentAddress } = nextProps
     this.setState({ gettingCurrentLocation })
-    if (currentLatlng) {
+    const { lat, lng } = currentLatlng
+    if (typeof lat === 'number' && typeof lng === 'number') {
       this.clearMarker()
       this.createMarker(currentLatlng, currentAddress)
       this.moveTo(currentLatlng)
