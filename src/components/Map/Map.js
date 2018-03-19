@@ -25,7 +25,7 @@ class Map extends Component {
       zoom: 7,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
     }
-    this.addressMarker = null
+    this.marker = null
     this.infowindow = new google.maps.InfoWindow()
     this.map = new google.maps.Map(document.getElementById('map'), mapOptions)
     google.maps.event.addListener(this.map, 'click', this.onMapClickHandler)
@@ -34,12 +34,9 @@ class Map extends Component {
   componentWillReceiveProps(nextProps) {
     const { currentLatlng, gettingCurrentLocation, currentAddress } = nextProps
     this.setState({ gettingCurrentLocation })
-    const { lat, lng } = currentLatlng
-    if (typeof lat === 'number' && typeof lng === 'number') {
-      this.clearMarker()
-      this.createMarker(currentLatlng, currentAddress)
-      this.moveTo(currentLatlng)
-    }
+    this.clearMarker()
+    this.createMarker(currentLatlng, currentAddress)
+    this.moveTo(currentLatlng)
   }
 
   shouldComponentUpdate(nextProps) {
@@ -47,34 +44,37 @@ class Map extends Component {
   }
 
   moveTo = position => {
-    this.map.panTo(position)
+    this.map.setCenter(position)
   }
 
-  createMarker = (position, address) => {
-    this.addressMarker = new google.maps.Marker({
-      position,
-      map: this.map,
-    })
-    if (address) {
-      this.infowindow.setContent(address)
-      this.infowindow.open(this.map, this.addressMarker)
+  createMarker = (position, formatedAddress) => {
+    const { lat, lng } = position
+    if (typeof lat === 'number' && typeof lng === 'number') {
+      this.marker = new google.maps.Marker({
+        position,
+        map: this.map,
+      })
+      if (formatedAddress) {
+        this.infowindow.setContent(formatedAddress)
+        this.infowindow.open(this.map, this.marker)
+      }
     }
   }
 
   clearMarker = () => {
-    if (this.addressMarker) this.addressMarker.setMap(null)
+    if (this.marker) this.marker.setMap(null)
   }
 
   onMapClickHandler = e => {
     this.clearMarker()
     const position = e.latLng
-    this.addressMarker = new google.maps.Marker({
+    this.marker = new google.maps.Marker({
       position,
       map: this.map,
     })
     this.latlng = { lat: position.lat(), lng: position.lng() }
     this.infowindow.setContent('Loading address...')
-    this.infowindow.open(this.map, this.addressMarker)
+    this.infowindow.open(this.map, this.marker)
     location.getAddress(this.latlng).then(this.showAddressOnInfoWindow)
   }
 

@@ -37,20 +37,9 @@ function getAddresses() {
  * @param {Address object will be add to list} address
  */
 function addAddress(address) {
-  const { lat, lng, street, ward, district, city, country } = address
-  if (!lat || !lng) {
-    address = { street, ward, district, city, country }
-  }
-  return dispatch => {
-    const ref = database.ref('/addresses')
-    ref
-      .push(address)
-      .then(res => {
-        dispatch({ type: ADD_ADDRESS_SUCCESS, payload: { ...address, id: res.key } })
-      })
-      .catch(err => {
-        dispatch(serverError(err))
-      })
+  return {
+    type: ADD_ADDRESS_SUCCESS,
+    payload: address,
   }
 }
 
@@ -59,9 +48,8 @@ function addAddress(address) {
  * @param {Address object will be get updated} editedAddress
  */
 function editAddress(editedAddress) {
-  return dispatch => {
-    const ref = database.ref('/addresses')
-    ref.child(editedAddress.id).set(editedAddress)
-    dispatch({ type: EDIT_ADDRESS_SUCCESS, payload: editedAddress })
+  return {
+    type: EDIT_ADDRESS_SUCCESS,
+    payload: editedAddress,
   }
 }

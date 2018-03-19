@@ -6,6 +6,9 @@ export const GET_CURRENT_LOCATION_SUCCESS = 'GET_CURRENT_LOCATION_SUCCESS'
 
 export { getCurrentLocation }
 
+/**
+ * Get current location if your browser support
+ */
 function getCurrentLocation() {
   return dispatch => {
     dispatch({ type: GET_CURRENT_LOCATION })
@@ -19,6 +22,10 @@ function getCurrentLocation() {
   }
 }
 
+/**
+ * function to get address from location object
+ * @param {coords contain latitude and longitude} param0
+ */
 function getAddressFromLocation({ coords }) {
   const latlng = { lat: coords.latitude, lng: coords.longitude }
   return new Promise((resolve, reject) => {

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { database } from 'configs/firebase'
 
+import { addresses } from 'services'
 import { addAddress, editAddress, getAddresses } from 'actions/address'
 import { Loading, AddressItem, AddressForm, Map, CsvDownloader } from 'components'
 
@@ -32,6 +33,17 @@ class Home extends Component {
   addressForm = null
   addressRef = database.ref().child('addresses')
 
+  componentWillMount() {
+    this.addressRef.on('child_added', snap => {
+      const dataAdded = snap.val()
+      this.props.addAddress({ ...dataAdded, id: snap.key })
+    })
+    this.addressRef.on('child_changed', snap => {
+      const dataChanged = snap.val()
+      this.props.editAddress({ ...dataChanged, id: snap.key })
+    })
+  }
+
   componentDidMount() {
     this.props.getAddresses()
   }
@@ -50,10 +62,8 @@ class Home extends Component {
     const address = [street, ward, district, city, country].join(', '.replace(/, ,/g, ','))
     this.addressForm.changeMode('edit')
     this.addressForm.fillData(addressesById[id])
-    if (typeof locationData.lat === 'number' && typeof locationData.lng === 'number') {
-      this.map.getWrappedInstance().createMarker(locationData, address)
-      this.map.getWrappedInstance().moveTo(locationData)
-    }
+    this.map.getWrappedInstance().createMarker(locationData, address)
+    this.map.getWrappedInstance().moveTo(locationData)
   }
 
   renderAddressItem = id => {
@@ -74,9 +84,9 @@ class Home extends Component {
 
   addressFormSubmit = ({ id, street, ward, district, city, country, lat, lng }, formMode) => {
     if (formMode === 'edit' && !!id) {
-      this.props.editAddress({ id, street, ward, district, city, country, lat, lng })
+      addresses.editAddress({ id, street, ward, district, city, country, lat, lng })
     } else if (formMode === 'add') {
-      this.props.addAddress({ street, ward, district, city, country, lat, lng })
+      addresses.addAddress({ street, ward, district, city, country, lat, lng })
     }
     this.addressForm.reset()
     this.hideMap()
@@ -98,15 +108,14 @@ class Home extends Component {
   }
 
   render() {
-    const headers = ['Street', 'Ward', 'District', 'City', 'Country']
+    const csvHeaders = ['Street', 'Ward', 'District', 'City', 'Country']
     const { formMode, showMap } = this.state
     const { isFetching, addressesListedIds, addressesById } = this.props
     const data = addressesListedIds.map(item => {
       const { street, ward, district, city, country } = addressesById[item]
       return [street, ward, district, city, country]
     })
-    const mapClasses = ['map-container']
-    showMap && mapClasses.push('show')
+    const mapClasses = showMap ? 'map-container show' : 'map-container'
     return (
       <main className="home-wrapper">
         <div className="form-container">
@@ -124,9 +133,9 @@ class Home extends Component {
           <div className="address-container">{addressesListedIds.map(this.renderAddressItem)}</div>
         )}
         <div className="download-btn">
-          <CsvDownloader headers={headers} data={data} text={'Download'} />
+          <CsvDownloader headers={csvHeaders} data={data} text={'Download'} />
         </div>
-        <div className={mapClasses.join(' ')}>
+        <div className={mapClasses}>
           <Map ref={node => (this.map = node)} onClick={this.mapClickHandler} />
         </div>
       </main>
