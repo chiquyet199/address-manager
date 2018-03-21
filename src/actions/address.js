@@ -1,5 +1,5 @@
-import { database } from 'configs/firebase'
 import { serverError } from 'actions/common'
+import { addresses } from 'services'
 
 export const GET_ADDRESSES = 'GET_ADDRESSES'
 export const ADD_ADDRESS_SUCCESS = 'ADD_ADDRESS_SUCCESS'
@@ -14,11 +14,9 @@ export { addAddress, editAddress, getAddresses }
 function getAddresses() {
   return dispatch => {
     dispatch({ type: GET_ADDRESSES })
-    database
-      .ref('/addresses')
-      .once('value')
-      .then(res => {
-        const data = res.exportVal()
+    addresses
+      .getAllAddresses()
+      .then(data => {
         const payload = {}
         for (let key in data) {
           payload[key] = data[key]

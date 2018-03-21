@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { database } from 'configs/firebase'
 
 import { addresses } from 'services'
 import { addAddress, editAddress, getAddresses } from 'actions/address'
@@ -31,21 +30,12 @@ class Home extends Component {
 
   map = null
   addressForm = null
-  addressRef = database.ref().child('addresses')
-
-  componentWillMount() {
-    this.addressRef.on('child_added', snap => {
-      const dataAdded = snap.val()
-      this.props.addAddress({ ...dataAdded, id: snap.key })
-    })
-    this.addressRef.on('child_changed', snap => {
-      const dataChanged = snap.val()
-      this.props.editAddress({ ...dataChanged, id: snap.key })
-    })
-  }
 
   componentDidMount() {
-    this.props.getAddresses()
+    addresses.bindFirebaseEventListener({
+      onChildAdded: this.props.addAddress,
+      onChildChanged: this.props.editAddress,
+    })
   }
 
   componentWillReceiveProps(nextProps) {
